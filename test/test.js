@@ -1,20 +1,20 @@
 'use strict';
 
-var koa = require('koa');
-var koaBody = require('koa-body');
-var request = require('supertest');
-var route = require('koa-route');
-var forward = require('../');
+const koa = require('koa');
+const koaBody = require('koa-body');
+const request = require('supertest');
+const route = require('koa-route');
+const forward = require('../');
 
 describe('test localhost', function () {
   it('should return 200', function (done) {
-    var app = koa();
+    const app = new koa();
     forward(app);
-    app.use(route.get('/', function* () {
-      this.forward('/test');
+    app.use(route.get('/', async function (ctx) {
+      ctx.forward('/test');
     }));
-    app.use(route.get('/test', function* () {
-      this.body = 'test';
+    app.use(route.get('/test', async function (ctx) {
+      ctx.body = 'test';
     }));
 
     request(app.callback())
@@ -30,16 +30,16 @@ describe('test localhost', function () {
   });
 
   it('should return body', function (done) {
-    var app = koa();
+    const app = new koa();
     forward(app, {
       debug: true
     });
     app.use(koaBody());
-    app.use(route.post('/', function* () {
-      this.forward('/test');
+    app.use(route.post('/', async function (ctx) {
+      ctx.forward('/test');
     }));
-    app.use(route.post('/test', function* () {
-      this.body = this.request.body;
+    app.use(route.post('/test', async function (ctx) {
+      ctx.body = ctx.request.body;
     }));
 
     request(app.callback())
@@ -56,13 +56,13 @@ describe('test localhost', function () {
   });
 
   it('should return 401', function (done) {
-    var app = koa();
+    const app = new koa();
     forward(app);
-    app.use(route.get('/', function* () {
-      this.forward('/auth');
+    app.use(route.get('/', async function (ctx) {
+      ctx.forward('/auth');
     }));
-    app.use(route.get('/auth', function* () {
-      this.throw(401, 'need auth');
+    app.use(route.get('/auth', async function (ctx) {
+      ctx.throw(401, 'need auth');
     }));
 
     request(app.callback())
@@ -78,13 +78,13 @@ describe('test localhost', function () {
   });
 
   it('should return 404', function (done) {
-    var app = koa();
+    const app = new koa();
     forward(app);
-    app.use(route.get('/', function* () {
-      this.forward('/auth');
+    app.use(route.get('/', async function (ctx) {
+      ctx.forward('/auth');
     }));
-    app.use(route.get('/test', function* () {
-      this.throw(401, 'test');
+    app.use(route.get('/test', async function (ctx) {
+      ctx.throw(401, 'test');
     }));
 
     request(app.callback())
@@ -96,10 +96,10 @@ describe('test localhost', function () {
 
 describe('test remote url', function () {
   it('should return image binary', function (done) {
-    var app = koa();
+    const app = new koa();
     forward(app);
-    app.use(route.get('/', function* () {
-      this.forward('http://github.global.ssl.fastly.net/images/icons/emoji/+1.png?v5', {
+    app.use(route.get('/', async function (ctx) {
+      ctx.forward('http://github.global.ssl.fastly.net/images/icons/emoji/+1.png?v5', {
         headers: {}
       });
     }));
@@ -117,7 +117,7 @@ describe('test remote url', function () {
   });
 
   it('should forward to http://expressjs.com', function (done) {
-    var app = koa();
+    const app = new koa();
     forward(app, {
       baseUrl: 'http://expressjs.com',
       headers: {},
@@ -130,7 +130,7 @@ describe('test remote url', function () {
       .expect(200)
       .end(function (err, res) {
         if (err) return done(err);
-        
+
         if (!res.text.match(/Fast, unopinionated, minimalist web framework/)) {
           return done('Not match `Fast, unopinionated, minimalist web framework`');
         }
@@ -139,7 +139,7 @@ describe('test remote url', function () {
   });
 
   it('should forward to http://expressjs.com/en/guide/routing.html', function (done) {
-    var app = koa();
+    const app = new koa();
     forward(app, {
       baseUrl: 'http://expressjs.com',
       headers: {},
@@ -161,7 +161,7 @@ describe('test remote url', function () {
   });
 
   it('should no forward and return body', function (done) {
-    var app = koa();
+    const app = new koa();
     app.use(koaBody());
 
     forward(app, {
@@ -170,13 +170,13 @@ describe('test remote url', function () {
       debug: true
     });
     app.use(forward.all());
-    app.use(function* () {
-      this.body = this.request.body;
+    app.use(async function (ctx) {
+      ctx.body = ctx.request.body;
     });
 
     request(app.callback())
       .post('/guide/routing.html')
-      .send({ name: 'nswbmw' })
+      .send({name: 'nswbmw'})
       .expect(200)
       .end(function (err, res) {
         if (err) return done(err);
@@ -189,7 +189,7 @@ describe('test remote url', function () {
   });
 
   it('should no forward', function (done) {
-    var app = koa();
+    const app = new koa();
     app.use(koaBody());
 
     forward(app, {
@@ -197,14 +197,14 @@ describe('test remote url', function () {
       headers: {},
       debug: true
     });
-    app.use(function* () {
-      this.body = this.request.body;
+    app.use(async function (ctx) {
+      ctx.body = ctx.request.body;
     });
     app.use(forward.all());
 
     request(app.callback())
       .post('/guide/routing.html')
-      .send({ name: 'nswbmw' })
+      .send({name: 'nswbmw'})
       .expect(200)
       .end(function (err, res) {
         if (err) return done(err);
@@ -217,7 +217,7 @@ describe('test remote url', function () {
   });
 
   it('should return 404', function (done) {
-    var app = koa();
+    const app = new koa();
     forward(app, {
       baseUrl: 'http://non-existent-url.com'
     });
@@ -230,7 +230,7 @@ describe('test remote url', function () {
   });
 
   it('should upload file success', function (done) {
-    var app1 = koa();
+    const app1 = new koa();
     forward(app1, {
       baseUrl: 'http://localhost:3001',
       debug: true
@@ -240,13 +240,13 @@ describe('test remote url', function () {
     }));
     app1.use(forward.all());
 
-    var app2 = koa();
+    const app2 = new koa();
     app2.use(koaBody({
       multipart: true
     }));
-    app2.use(function *() {
-      var body = this.request.body;
-      this.body = body.fields.name + '/' + body.files.avatar.name;
+    app2.use(async function (ctx) {
+      const body = ctx.request.body;
+      ctx.body = body.fields.name + '/' + body.files.avatar.name;
     });
     app2.listen(3001);
 

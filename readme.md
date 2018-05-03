@@ -1,10 +1,11 @@
 ## koa-forward-request
 
 Forward request for koa, debugging use.
+support for koa2
 
 ### Install
 
-    npm i koa-forward-request --save
+    npm i koa-forward-request2 --save
 
 ### Usage
 
@@ -16,7 +17,7 @@ forward(app[, options])
 ```
 'use strict';
 
-var app = require('koa')();
+var app = new require('koa')();
 var route = require('koa-route');
 var logger = require('koa-logger');
 
@@ -28,12 +29,12 @@ forward(app, {
 
 app.use(logger());
 
-app.use(route.get('/', function* () {
-  this.forward('/test');
+app.use(route.get('/', async function (ctx) {
+  ctx.forward('/test');
 }));
 
-app.use(route.get('/test', function* () {
-  this.body = 'test';
+app.use(route.get('/test', async function (ctx) {
+  ctx.body = 'test';
 }));
 
 app.listen(3000);
@@ -43,7 +44,7 @@ or
 ```
 'use strict';
 
-var app = require('koa')();
+var app = new require('koa')();
 var route = require('koa-route');
 var koaBody = require('koa-body');
 var logger = require('koa-logger');
@@ -57,12 +58,12 @@ forward(app, {
 app.use(logger());
 app.use(koaBody());
 
-app.use(route.post('/', function* () {
-  this.forward('/test');
+app.use(route.post('/', async function (ctx) {
+  ctx.forward('/test');
 }));
 
-app.use(route.post('/test', function* () {
-  this.body = 'test';
+app.use(route.post('/test', async function (ctx) {
+  ctx.body = 'test';
 }));
 
 app.listen(3000);
@@ -73,7 +74,7 @@ or
 ```
 'use strict';
 
-var app = require('koa')();
+var app = new require('koa')();
 var route = require('koa-route');
 var koaBody = require('koa-body');
 

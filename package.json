@@ -1,16 +1,16 @@
 {
-  "name": "koa-forward-request",
-  "version": "0.8.0",
-  "description": "Forward request for koa",
+  "name": "koa-forward-request2",
+  "version": "1.0.0",
+  "description": "Forward request for koa2",
   "main": "index.js",
   "scripts": {
     "test": "mocha --harmony test/test --timeout=10000"
   },
-  "author": "nswbmw",
+  "author": "biebg",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nswbmw/koa-forward-request"
+    "url": "https://github.com/biebg/koa-forward-request"
   },
   "keywords": [
     "koa",
@@ -18,10 +18,10 @@
     "redirect"
   ],
   "devDependencies": {
-    "koa": "^1.2.0",
-    "koa-body": "^1.4.0",
-    "koa-logger": "^1.3.0",
-    "koa-route": "^2.4.2",
+    "koa": "^2.5.1",
+    "koa-body": "^2.5.0",
+    "koa-logger": "^3.2.0",
+    "koa-route": "^3.2.0",
     "mocha": "^2.5.3",
     "supertest": "^1.2.0"
   },

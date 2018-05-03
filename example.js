@@ -1,12 +1,13 @@
 'use strict';
 
-var app = require('koa')();
-var route = require('koa-route');
-var koaBody = require('koa-body');
-var logger = require('koa-logger');
+const Koa = require('koa');
+const route = require('koa-route');
+const koaBody = require('koa-body');
+const logger = require('koa-logger');
 
-var forward = require('./');
+const forward = require('./');
 
+const app = new Koa();
 forward(app, {
   debug: true
 });
@@ -16,21 +17,21 @@ app.use(koaBody({
   multipart: true
 }));
 
-app.use(route.post('/', function* () {
-  console.log(this.method);
-  console.log(this.request.header);
-  console.log(this.request.body);
+app.use(route.post('/', async function (ctx) {
+  console.log(ctx.method);
+  console.log(ctx.request.header);
+  console.log(ctx.request.body);
 
-  this.forward('/test');
+  ctx.forward('/test');
 }));
 
-app.use(route.post('/test', function* () {
-  console.log(this.method);
-  console.log(this.request.header);
-  console.log(this.request.body);
- 
-  this.status = 200;
-  this.body = this.request.body;
+app.use(route.post('/test', async function (ctx) {
+  console.log(ctx.method);
+  console.log(ctx.request.header);
+  console.log(ctx.request.body);
+
+  ctx.status = 200;
+  ctx.body = ctx.request.body;
 }));
 
 app.listen(3000);

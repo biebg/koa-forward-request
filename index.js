@@ -1,11 +1,11 @@
 'use strict';
 
-var assert = require('assert');
-var fs = require('fs');
+const assert = require('assert');
+const fs = require('fs');
 
-var request = require('request');
-var merge = require('merge-descriptors');
-var isUrl = require('is-url');
+const request = require('request');
+const merge = require('merge-descriptors');
+const isUrl = require('is-url');
 
 module.exports = function forwardRequest(app, defaultOptions) {
   defaultOptions = defaultOptions || {};
@@ -34,9 +34,9 @@ module.exports = function forwardRequest(app, defaultOptions) {
       options.json = true;
       break;
     case 'multipart/form-data':
-      var body = this.request.body;
-      var files = body.files || {};
-      var fields = body.fields || {};
+      const body = this.request.body;
+      const files = body.files || {};
+      const fields = body.fields || {};
       if (!options.formData) {
         delete options.headers['content-length'];
         options.formData = {};
@@ -62,7 +62,7 @@ module.exports = function forwardRequest(app, defaultOptions) {
         options.body = options.body || this.request.body;
       }
     }
-    var self = this;
+    const self = this;
     self.respond = false;
 
     if (options.debug) {
@@ -85,11 +85,11 @@ module.exports = function forwardRequest(app, defaultOptions) {
   module.exports.all = function all (options) {
     assert(defaultOptions.baseUrl, 'use `all()` must set `baseUrl` in options');
 
-    return function* (next) {
-      yield* next;
+    return async function (ctx, next) {
+      await next();
 
-      if (this.status === 404) {
-        this.forward(this.originalUrl, options);
+      if (ctx.status === 404) {
+        ctx.forward(ctx.originalUrl, options);
       }
     };
   };
